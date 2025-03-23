@@ -1,0 +1,6 @@
+flask
+sqlite3
+google-generativeai
+matplotlib
+numpy
+pyttsx3
