@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[rgb(166,166,166)] flex items-center justify-center h-screen">
+    <div class="bg-white shadow-lg rounded-lg p-8 w-96 text-center">
+        <img src="{{ url_for('static', filename='images/pcp_logo.jpg') }}" class="w-16 mx-auto mb-4" alt="PCP Logo">
+        <h2 class="text-2xl font-semibold mb-6">Create an Account</h2>
+        <form method="POST" class="space-y-4">
+            <div>
+                <label class="block text-gray-700 text-sm font-bold">Username:</label>
+                <input type="text" name="username" required class="w-full px-3 py-2 border rounded-lg">
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-bold">Password:</label>
+                <input type="password" name="password" required class="w-full px-3 py-2 border rounded-lg">
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-bold">Confirm Password:</label>
+                <input type="password" name="confirm_password" required class="w-full px-3 py-2 border rounded-lg">
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-bold">Select User Type:</label>
+                <select name="tag" class="w-full px-3 py-2 border rounded-lg">
+                    <option value="P">Patient</option>
+                    <option value="C">Clinician</option>
+                    <option value="H">Hospital</option>
+                </select>
+            </div>
+
+            <button type="submit" class="w-full bg-gray-800 text-white py-2 px-4 rounded-lg hover:bg-gray-700">Signup</button>
+        </form>
+        <p class="mt-4 text-sm text-gray-600">
+            Already have an account? <a href="/login" class="text-blue-600 hover:underline">Login</a>
+        </p>
+    </div>
+</body>
+</html>

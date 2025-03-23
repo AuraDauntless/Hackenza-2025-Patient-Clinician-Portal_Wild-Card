@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinician Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[rgb(166,166,166)] min-h-screen flex flex-col items-center p-6">
+    <div class="w-full max-w-6xl bg-white p-6 rounded-xl shadow-md">
+        <h2 class="text-2xl font-semibold text-center mb-4">Clinician Dashboard</h2>
+        <p class="text-center mb-4">Logged in as: <strong id="clinicianName" class="text-blue-600">{{ clinician_username }}</strong></p>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse border border-gray-300">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="border border-gray-300 p-3">Username</th>
+                        <th class="border border-gray-300 p-3">Query</th>
+                        <th class="border border-gray-300 p-3">AI Response</th>
+                        <th class="border border-gray-300 p-3">Verification & Replies</th>
+                        <th class="border border-gray-300 p-3">Status</th>
+                        <th class="border border-gray-300 p-3">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in queries %}
+                    <tr class="odd:bg-gray-100 even:bg-white">
+                        <td class="border border-gray-300 p-3">{{ row["username"] }}</td>
+                        <td class="border border-gray-300 p-3">{{ row["query"] }}</td>
+                        <td class="border border-gray-300 p-3">{{ row["ai_response"] }}</td>
+                        <td class="border border-gray-300 p-3">{{ row["verification"] }}</td>
+                        <td class="border border-gray-300 p-3 text-center">
+                            {% if row["status"] == "Not Verified" %}
+                                <span class="text-red-600" title="AI-generated, not clinician-verified">❌</span>
+                            {% else %}
+                                <span class="text-green-600" title="{{ row["verification"] }}">✅</span>
+                            {% endif %}
+                        </td>
+                        <td class="border border-gray-300 p-3 text-center">
+                            {% if row["status"] == "Not Verified" %}
+                                <button class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-800" onclick="verify({{ row['id'] }})">Verify</button>
+                            {% else %}
+                                ✅ Verified by {{ row["verification"] }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        function verify(rowId) {
+            let clinician = document.getElementById("clinicianName").innerText;
+            let review = prompt("Enter your review:");
+            if (!review) return alert("Review is required to verify.");
+
+            let correctness = confirm("Is this response correct?");
+            let status = correctness ? "Verified" : "Wrong";
+
+            fetch('/verify_response', {
+                method: 'POST',
+                body: JSON.stringify({ "row_id": rowId, "clinician": clinician, "review": review, "status": status }),
+                headers: { "Content-Type": "application/json" }
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                location.reload();
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>

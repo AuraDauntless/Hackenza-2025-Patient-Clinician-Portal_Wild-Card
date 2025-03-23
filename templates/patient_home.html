@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Chat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[rgb(166,166,166)] flex h-screen">
+    <div class="w-1/4 bg-gray-300 p-4 overflow-y-auto">
+        <h3 class="text-lg font-semibold mb-2">Previous Chats</h3>
+        {% for chat in previous_chats %}
+            <div class="p-2 bg-white rounded mb-2 cursor-pointer hover:bg-gray-100" onclick="loadChat({{ chat[0] }})">
+                {{ chat[1] }}
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="flex-grow p-4 flex flex-col">
+        <h2 class="text-2xl font-semibold mb-4">Patient Chat</h2>
+        <div class="flex-grow overflow-y-scroll border border-gray-400 bg-white p-4 rounded mb-4" id="chatBox"></div>
+        <div class="flex">
+            <input type="text" id="queryInput" class="flex-grow p-2 border rounded" placeholder="Type your query...">
+            <button onclick="sendQuery()" class="bg-blue-500 text-white px-4 py-2 ml-2 rounded hover:bg-blue-600">Send</button>
+        </div>
+    </div>
+
+    <script>
+        function sendQuery() {
+            let query = document.getElementById("queryInput").value;
+            let chatBox = document.getElementById("chatBox");
+            chatBox.innerHTML += `<p><strong>You:</strong> ${query}</p>`;
+
+            fetch('/patient_chat', {
+                method: 'POST',
+                body: new URLSearchParams({ 'query': query }),
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                let statusIcon = data.status === "Verified" 
+                    ? `<span class='text-green-600' title='Verified by ${data.verified_by}'> ✅</span>` 
+                    : `<span class='text-red-600' title='AI-generated, not clinician-verified'> ❌</span>`;
+                
+                chatBox.innerHTML += `<p><strong>AI:</strong> ${data.response} ${statusIcon}
+                    <button onclick="readAloud('${data.response.replace(/'/g, "\'")}')">🔊</button></p>`;
+                
+                if (data.verification) {
+                    chatBox.innerHTML += `<p><strong>Clinician:</strong> ${data.verification}</p>`;
+                }
+                document.getElementById("queryInput").value = "";
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+        }
+
+        function loadChat(chatId) {
+            fetch(`/get_chat/${chatId}`)
+            .then(response => response.json())
+            .then(data => {
+                let chatBox = document.getElementById("chatBox");
+                let statusIcon = data.status === "Verified" 
+                    ? `<span class='text-green-600' title='Verified by ${data.verified_by}'> ✅</span>` 
+                    : `<span class='text-red-600' title='AI-generated, not clinician-verified'> ❌</span>`;
+                
+                chatBox.innerHTML = `
+                    <p><strong>You:</strong> ${data.query}</p>
+                    <p><strong>AI:</strong> ${data.response} ${statusIcon}
+                        <button onclick="readAloud('${data.response.replace(/'/g, "\'")}')">🔊</button>
+                    </p>
+                `;
+                
+                if (data.verification) {
+                    chatBox.innerHTML += `<p><strong>Clinician:</strong> ${data.verification}</p>`;
+                }
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+        }
+
+        function readAloud(text) {
+            fetch('/read_aloud', {
+                method: 'POST',
+                body: JSON.stringify({ text: text }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
+    </script>
+</body>
+</html>

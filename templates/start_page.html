@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCP - Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[rgb(166,166,166)] flex items-center justify-center h-screen">
+    <div class="bg-white shadow-lg rounded-lg p-8 w-96 text-center">
+        <img src="{{ url_for('static', filename='images/pcp_logo.jpg') }}" class="w-16 mx-auto mb-4" alt="PCP Logo">
+        <h2 class="text-2xl font-semibold mb-6">Welcome to the Patient-Clinician Portal</h2>
+        <button onclick="window.location.href='/login'" class="w-full bg-gray-800 text-white py-2 px-4 rounded-lg hover:bg-gray-700">Login</button>
+        <button onclick="window.location.href='/signup'" class="w-full mt-3 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300">Signup</button>
+    </div>
+</body>
+</html>

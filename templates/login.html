@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - PCP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[rgb(166,166,166)] flex items-center justify-center h-screen">
+    <div class="bg-white shadow-lg rounded-lg p-8 w-96 text-center">
+        <img src="{{ url_for('static', filename='images/pcp_logo.jpg') }}" class="w-16 mx-auto mb-4" alt="PCP Logo">
+        <h2 class="text-2xl font-semibold mb-6">Login to PCP</h2>
+        
+        <form method="POST" action="/login" class="text-left">
+            <label class="block text-gray-700">Username:</label>
+            <input type="text" name="username" required class="w-full border rounded-lg p-2 mb-4">
+            
+            <label class="block text-gray-700">Password:</label>
+            <input type="password" name="password" required class="w-full border rounded-lg p-2 mb-6">
+            
+            <button type="submit" class="w-full bg-gray-800 text-white py-2 px-4 rounded-lg hover:bg-gray-700">Login</button>
+        </form>
+        
+        <p class="mt-4 text-sm text-gray-600">Don't have an account? <a href="/signup" class="text-blue-500 hover:underline">Sign up</a></p>
+    </div>
+</body>
+</html>
